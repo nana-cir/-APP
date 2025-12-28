@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>詐欺かも？かんたんチェック（試作）</title>
+  <style>
+    :root{
+      --bg:#fbf7ef;           /* アイボリー */
+      --card:#ffffff;
+      --ink:#1d2a33;
+      --muted:#51606b;
+      --blue:#2b6cb0;         /* 明るめブルー */
+      --green:#2f855a;        /* やさしいグリーン */
+      --orange:#d97706;       /* 落ち着いたオレンジ */
+      --line:#e7e1d6;
+      --shadow:0 10px 30px rgba(0,0,0,.08);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI","Yu Gothic",Meiryo,sans-serif;
+      background: linear-gradient(180deg, #ffffff 0%, var(--bg) 60%, #f7fbf8 100%);
+      color:var(--ink);
+    }
+    header{
+      padding:16px 16px 6px;
+      max-width:980px;
+      margin:0 auto;
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;border-radius:999px;background:rgba(43,108,176,.08);
+      width:fit-content;
+      color:var(--blue); font-weight:700;
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:10px 16px 28px;}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px;}
+    @media (min-width:860px){ .grid{grid-template-columns: 1.15fr .85fr;} }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    h1{font-size:22px;margin:10px 0 6px;}
+    h2{font-size:18px;margin:0 0 10px;}
+    p{margin:8px 0;color:var(--muted);line-height:1.6}
+    .hint{font-size:14px;color:var(--muted)}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      background:rgba(47,133,90,.10);
+      color:var(--green);font-weight:700;font-size:13px;
+      margin:6px 0 10px;
+    }
+    .sectionTitle{
+      display:flex;align-items:center;gap:10px;
+      margin:16px 0 10px;
+      padding-top:14px;
+      border-top:1px dashed var(--line);
+    }
+    .sectionTitle .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:rgba(43,108,176,.25);
+      border:2px solid rgba(43,108,176,.45);
+    }
+    .checklist{
+      display:grid; grid-template-columns:1fr; gap:10px;
+      margin:8px 0 0;
+    }
+    @media (min-width:560px){ .checklist{grid-template-columns:1fr 1fr;} }
+    label.item{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:12px 12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background: linear-gradient(180deg, #fff 0%, #fffaf0 100%);
+      cursor:pointer;
+      user-select:none;
+    }
+    label.item:hover{border-color:#d8cfbf}
+    input[type="checkbox"]{
+      width:22px;height:22px;margin-top:2px;accent-color:var(--green);
+      flex:0 0 auto;
+    }
+    .itemText{font-size:16px;line-height:1.35}
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:14px;
+    }
+    button, a.btn{
+      border:0;
+      border-radius:14px;
+      padding:14px 16px;
+      font-size:16px;
+      font-weight:800;
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      min-height:52px;
+    }
+    button.primary{
+      background:linear-gradient(180deg, rgba(47,133,90,.95) 0%, rgba(47,133,90,.85) 100%);
+      color:#fff;
+    }
+    button.secondary{
+      background:rgba(43,108,176,.10);
+      color:var(--blue);
+      border:1px solid rgba(43,108,176,.25);
+    }
+    button.ghost{
+      background:transparent;
+      color:var(--muted);
+      border:1px solid var(--line);
+    }
+    .rightCard .mini{
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.65;
+      background:linear-gradient(180deg, rgba(43,108,176,.06) 0%, rgba(47,133,90,.05) 100%);
+      border:1px solid rgba(43,108,176,.12);
+      border-radius:14px;
+      padding:12px;
+    }
+    .screen{display:none;}
+    .screen.active{display:block;}
+    .banner{
+      display:flex;gap:10px;align-items:flex-start;
+      padding:12px 12px;border-radius:14px;
+      border:1px solid rgba(217,119,6,.25);
+      background:linear-gradient(180deg, rgba(217,119,6,.10) 0%, rgba(217,119,6,.06) 100%);
+      margin:8px 0 12px;
+    }
+    .banner .icon{
+      width:34px;height:34px;border-radius:10px;
+      background:rgba(217,119,6,.18);
+      display:flex;align-items:center;justify-content:center;
+      font-size:18px;
+      flex:0 0 auto;
+    }
+    .banner strong{color:#7a4b00}
+    ul.clean{margin:10px 0 0 22px;color:var(--ink)}
+    ul.clean li{margin:8px 0}
+    .callRow{
+      display:flex;flex-direction:column;gap:10px;margin-top:12px;
+    }
+    a.call{
+      background:linear-gradient(180deg, rgba(43,108,176,.95) 0%, rgba(43,108,176,.82) 100%);
+      color:#fff;
+      border-radius:16px;
+      padding:14px 16px;
+      font-weight:900;
+      border:0;
+      box-shadow: var(--shadow);
+    }
+    a.call small{display:block;font-weight:700;opacity:.92;margin-top:4px}
+    .note{
+      font-size:13px;color:var(--muted);margin-top:10px;
+    }
+    .calm{
+      margin-top:14px;
+      padding:12px 12px;border-radius:14px;
+      background:rgba(47,133,90,.08);
+      border:1px solid rgba(47,133,90,.18);
+    }
+    .calm strong{color:var(--green)}
+    footer{
+      margin-top:16px;
+      font-size:12px;
+      color:#6b7280;
+      line-height:1.6;
+    }
+    .sr-only{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand" aria-label="ツール名">
+      🟢 かんたん詐欺チェック（試作）
+    </div>
+    <h1>迷ったときに、まずチェック</h1>
+    <p class="hint">当てはまるものを選ぶだけ（複数選択できます）。1つでも当てはまったら、次の画面で確認します。</p>
+  </header>
+
+  <main class="wrap">
+    <!-- Screen 1: Checklist -->
+    <section id="screen1" class="screen active" aria-labelledby="s1title">
+      <div class="grid">
+        <div class="card">
+          <h2 id="s1title">こんなこと、言われていませんか？</h2>
+          <div class="pill">✅ 選ぶだけでOK（複数選択）</div>
+
+          <div class="sectionTitle"><span class="dot"></span><strong>身分を名乗っている</strong></div>
+          <div class="checklist">
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">警察・刑事・検察官を名乗った</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">市役所・年金事務所を名乗った</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">銀行・カード会社を名乗った</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">通信会社（NTT・ドコモなど）を名乗った</span></label>
+          </div>
+
+          <div class="sectionTitle"><span class="dot"></span><strong>お金の話をされた</strong></div>
+          <div class="checklist">
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">未払い料金があると言われた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">今日中に支払わないと止まると言われた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">返金・還付金があると言われた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">手数料を先に払うよう言われた</span></label>
+          </div>
+
+          <div class="sectionTitle"><span class="dot"></span><strong>投資・副業の話</strong></div>
+          <div class="checklist">
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">必ず儲かる投資と言われた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">有名人の名前が出てきた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">元本保証と言われた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">少額から試せると言われた</span></label>
+          </div>
+
+          <div class="sectionTitle"><span class="dot"></span><strong>連絡方法を変えるよう言われた</strong></div>
+          <div class="checklist">
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">LINEや別アプリに移動してと言われた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">個人アカウントを追加するよう言われた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">電話を切らずに操作するよう言われた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">誰にも相談するなと言われた</span></label>
+          </div>
+
+          <div class="sectionTitle"><span class="dot"></span><strong>家族や知人を名乗っている</strong></div>
+          <div class="checklist">
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">息子・孫を名乗っている</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">事故・トラブルを起こしたと言われた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">今すぐお金が必要と言われた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">声がいつもと違う気がした</span></label>
+          </div>
+
+          <div class="sectionTitle"><span class="dot"></span><strong>急がせる・脅す言葉</strong></div>
+          <div class="checklist">
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">今すぐ対応しないと大変なことになる</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">今日中・今すぐと言われた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">あなただけ特別と言われた</span></label>
+            <label class="item"><input type="checkbox" name="phrase"><span class="itemText">秘密にするよう言われた</span></label>
+          </div>
+
+          <div class="actions">
+            <button id="btnCheck" class="primary" type="button">次へ（確認する）</button>
+            <button id="btnClear" class="secondary" type="button">選択をクリア</button>
+          </div>
+
+          <footer>
+            ※ このツールは試作です。効果を断定するものではありません。<br />
+            ※ 緊急の場合は110番してください。
+          </footer>
+        </div>
+
+        <aside class="card rightCard">
+          <h2>使い方</h2>
+          <div class="mini">
+            1）当てはまる項目にチェック<br>
+            2）「次へ（確認する）」を押す<br>
+            3）表示された案内に沿って行動する<br><br>
+            <strong>ポイント：</strong>詐欺は「急がせる」のが特徴です。迷ったら、まず止まりましょう。
+          </div>
+          <p class="note" id="offlineNote" style="display:none;">
+            📶 現在オフラインのようです。電話は電波のある場所で行ってください。
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Screen 2: Warning -->
+    <section id="screen2" class="screen" aria-labelledby="s2title">
+      <div class="card">
+        <div class="banner" role="status" aria-live="polite">
+          <div class="icon">⚠️</div>
+          <div>
+            <h2 id="s2title" style="margin:0 0 6px;">これは詐欺の可能性が非常に高いです</h2>
+            <p style="margin:0;color:#7a4b00;">落ち着いて、次の3つを確認してください。</p>
+          </div>
+        </div>
+
+        <ul class="clean">
+          <li><strong>まずは一度、電話を切ってください。</strong></li>
+          <li><strong>お金は絶対に払わないでください。</strong></li>
+          <li><strong>一人で判断しないでください。</strong></li>
+        </ul>
+
+        <div class="calm">
+          <strong>メモ：</strong>相手が「今すぐ」「秘密」と言うほど、いったん止まることが大切です。
+        </div>
+
+        <div class="actions">
+          <button id="btnToAction" class="primary" type="button">次へ（行動する）</button>
+          <button id="btnBack1" class="ghost" type="button">戻る</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 3: Actions -->
+    <section id="screen3" class="screen" aria-labelledby="s3title">
+      <div class="card">
+        <h2 id="s3title">次に取ってほしい行動</h2>
+        <p class="hint">優先順位の高い順に並べています。</p>
+
+        <div class="banner" style="border-color:rgba(43,108,176,.25);background:linear-gradient(180deg, rgba(43,108,176,.10) 0%, rgba(43,108,176,.06) 100%);">
+          <div class="icon" style="background:rgba(43,108,176,.18);">①</div>
+          <div>
+            <strong style="color:var(--blue);">警察に相談する（最優先）</strong>
+            <div class="callRow">
+              <a class="btn call" href="tel:9110" aria-label="警察相談専用窓口 #9110 に電話する">
+                📞 警察相談専用窓口 #9110
+                <small>（緊急でない詐欺相談はこちら）</small>
+              </a>
+              <div class="note">※ 緊急の場合は110番してください。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="banner" style="border-color:rgba(47,133,90,.22);background:linear-gradient(180deg, rgba(47,133,90,.09) 0%, rgba(47,133,90,.05) 100%);">
+          <div class="icon" style="background:rgba(47,133,90,.18);">②</div>
+          <div>
+            <strong style="color:var(--green);">家族や信頼できる人に相談</strong>
+            <p class="hint" style="margin:6px 0 0;">あらかじめ連絡先を登録しておくと安心です。</p>
+          </div>
+        </div>
+
+        <div class="banner">
+          <div class="icon">③</div>
+          <div>
+            <strong>落ち着いてください</strong>
+            <p style="margin:6px 0 0;color:#7a4b00;">
+              詐欺は「急がせる」のが特徴です。<br>
+              一度止まれば、被害は防げます。
+            </p>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="btnRestart" class="secondary" type="button">最初に戻る</button>
+        </div>
+
+        <footer>
+          ※ オフライン時は電話がつながらない場合があります。電波のある場所でおかけください。<br>
+          ※ このツールは試作です。必要に応じて警察・家族にご相談ください。
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const screens = [$("screen1"), $("screen2"), $("screen3")];
+
+    function showScreen(n){
+      screens.forEach((s,i)=>s.classList.toggle("active", i===n));
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function anyChecked(){
+      return Array.from(document.querySelectorAll('input[name="phrase"]')).some(x => x.checked);
+    }
+
+    function clearChecks(){
+      document.querySelectorAll('input[name="phrase"]').forEach(x => x.checked = false);
+    }
+
+    $("btnCheck").addEventListener("click", () => {
+      // 何もチェックがない場合は軽く促す（恐怖煽りはしない）
+      if(!anyChecked()){
+        alert("当てはまるものがある場合はチェックしてから「次へ」を押してください。\n迷ったときは、念のため相談するのも安心です。");
+        return;
+      }
+      showScreen(1);
+      // 読み上げ（対応ブラウザのみ）
+      speak("これは詐欺の可能性が非常に高いです。まずは一度、電話を切ってください。");
+    });
+
+    $("btnClear").addEventListener("click", () => clearChecks());
+
+    $("btnBack1").addEventListener("click", () => showScreen(0));
+
+    $("btnToAction").addEventListener("click", () => {
+      showScreen(2);
+      speak("次に取ってほしい行動です。警察相談専用窓口、シャープ、きゅういちいちぜろ。");
+    });
+
+    $("btnRestart").addEventListener("click", () => {
+      clearChecks();
+      showScreen(0);
+    });
+
+    // オフライン検知
+    function updateOffline(){
+      const offline = !navigator.onLine;
+      const n = $("offlineNote");
+      if(n) n.style.display = offline ? "block" : "none";
+    }
+    window.addEventListener("online", updateOffline);
+    window.addEventListener("offline", updateOffline);
+    updateOffline();
+
+    // 音声読み上げ（理想：②③を読み上げ）
+    function speak(text){
+      try{
+        if(!("speechSynthesis" in window)) return;
+        window.speechSynthesis.cancel();
+        const ut = new SpeechSynthesisUtterance(text);
+        ut.lang = "ja-JP";
+        ut.rate = 1.0;
+        ut.pitch = 1.0;
+        window.speechSynthesis.speak(ut);
+      }catch(e){
+        // 失敗しても黙ってスルー
+      }
+    }
+  </script>
+</body>
+</html>
