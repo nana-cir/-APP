@@ -3,7 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>詐欺かも？かんたんチェック（完全版）</title>
+  <title>詐欺かも？かんたんチェック</title>
+  
+  <script>
+    if (localStorage.getItem('nana_consent') !== 'true') {
+      window.location.href = 'annai.html';
+    }
+  </script>
+
   <style>
     :root{
       --bg:#fbf7ef; --card:#ffffff; --ink:#1d2a33; --muted:#51606b;
@@ -11,80 +18,42 @@
       --line:#e7e1d6; --shadow:0 10px 30px rgba(0,0,0,.08); --radius:18px;
     }
     *{box-sizing:border-box}
-    body{
-      margin:0; font-family: sans-serif; background: var(--bg); color:var(--ink);
-      line-height: 1.5; -webkit-tap-highlight-color: transparent;
-    }
+    body{ margin:0; font-family: sans-serif; background: var(--bg); color:var(--ink); -webkit-tap-highlight-color: transparent; }
     header{ padding:20px 16px; max-width:800px; margin:0 auto; text-align:center; }
     .wrap{ max-width:800px; margin:0 auto; padding:0 16px 40px; }
-    .card{
-      background:var(--card); border:2px solid var(--line);
-      border-radius:var(--radius); box-shadow:var(--shadow); padding:24px; margin-bottom: 20px;
-    }
-    h1{ font-size:24px; margin:0 0 10px; color:var(--blue); }
-    h2{ font-size:20px; margin:0 0 15px; border-left: 6px solid var(--blue); padding-left: 12px; }
-    p.guide { font-size: 16px; color: var(--muted); margin-bottom: 20px; }
-
-    /* チェックボックスを大きなボタン風に */
-    .checklist { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .card{ background:var(--card); border:2px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px; margin-bottom: 20px; }
+    h1{ font-size:24px; margin:0; color:var(--blue); }
+    h2{ font-size:20px; margin:20px 0 15px; border-left: 6px solid var(--blue); padding-left: 12px; }
+    .checklist { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px; }
     .item {
       display: flex; align-items: center; justify-content: center; text-align: center;
-      padding: 18px 10px; border: 2px solid var(--line); border-radius: 14px;
-      background: white; cursor: pointer; transition: 0.2s; min-height: 80px;
+      padding: 15px 10px; border: 2px solid var(--line); border-radius: 14px;
+      background: white; cursor: pointer; min-height: 70px;
     }
     .item input { display: none; }
-    .item:has(input:checked) {
-      background: #eef7f2; border-color: var(--green); box-shadow: 0 0 0 4px rgba(47, 133, 90, 0.1);
-    }
-    .itemText { font-size: 18px; font-weight: bold; }
-
-    /* 音声注意 */
-    .audio-notice {
-      background: #fff5eb; border: 2px solid var(--orange); padding: 15px;
-      border-radius: 14px; margin: 20px 0; display: flex; align-items: center; gap: 12px;
-      color: #7a4b00; font-weight: bold;
-    }
-
-    /* ボタン類 */
+    .item:has(input:checked) { background: #eef7f2; border-color: var(--green); }
+    .itemText { font-size: 17px; font-weight: bold; }
+    .audio-notice { background: #fff5eb; border: 2px solid var(--orange); padding: 15px; border-radius: 14px; margin: 20px 0; color: #7a4b00; font-weight: bold; }
     .actions { display: flex; gap: 15px; }
-    button {
-      flex: 1; padding: 20px; font-size: 20px; font-weight: 800; border: 0;
-      border-radius: 16px; cursor: pointer; min-height: 70px;
-    }
-    .btn-main { background: var(--green); color: white; box-shadow: 0 4px 0 #1e563a; }
-    .btn-main:active { transform: translateY(2px); box-shadow: 0 2px 0 #1e563a; }
+    button { flex: 1; padding: 18px; font-size: 18px; font-weight: 800; border: 0; border-radius: 16px; cursor: pointer; }
+    .btn-main { background: var(--green); color: white; }
     .btn-sub { background: #e2e8f0; color: var(--muted); }
-
-    /* 判定画面 */
     .screen { display: none; }
-    .screen.active { display: block; animation: fadeIn 0.3s; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    .result-box { padding: 20px; border-radius: 14px; margin-bottom: 20px; text-align: center; }
-    .result-box.danger { background: #fff5f5; border: 3px solid var(--red); color: var(--red); }
-    .result-box.caution { background: #fffaf0; border: 3px solid var(--orange); color: #7a4b00; }
-    .result-icon { font-size: 50px; margin-bottom: 10px; }
-
-    .advice-list { text-align: left; font-size: 19px; font-weight: bold; margin: 20px 0; }
-    .advice-list li { margin-bottom: 15px; }
-
-    .tel-btn {
-      display: block; background: var(--blue); color: white; text-decoration: none;
-      padding: 20px; border-radius: 16px; text-align: center; font-size: 22px;
-      font-weight: 800; margin-top: 20px; box-shadow: 0 4px 0 #1a4473;
-    }
+    .screen.active { display: block; }
+    .result-box { padding: 20px; border-radius: 14px; margin-bottom: 20px; text-align: center; border: 3px solid #ddd; }
+    .result-box.danger { background: #fff5f5; border-color: var(--red); color: var(--red); }
+    .result-box.caution { background: #fffaf0; border-color: var(--orange); color: #7a4b00; }
+    .tel-btn { display: block; background: var(--blue); color: white; text-decoration: none; padding: 20px; border-radius: 16px; text-align: center; font-size: 22px; font-weight: 800; margin-top: 20px; }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>🟢 詐欺かんたんチェック</h1>
-</header>
+<header><h1>🟢 詐欺かんたんチェック</h1></header>
 
 <main class="wrap">
-  <section id="screen1" class="screen active">
+  <section id="screen0" class="screen active">
     <div class="card">
-      <h2>1. 相手はだれですか？</h2>
+      <h2>1. 相手はだれ？</h2>
       <div class="checklist">
         <label class="item"><input type="checkbox" data-score="1"><span class="itemText">警察・検察</span></label>
         <label class="item"><input type="checkbox" data-score="1"><span class="itemText">役所・税務署</span></label>
@@ -93,8 +62,7 @@
         <label class="item"><input type="checkbox" data-score="1"><span class="itemText">通信会社</span></label>
         <label class="item"><input type="checkbox" data-score="1"><span class="itemText">その他</span></label>
       </div>
-
-      <h2>2. 言われた「言葉」は？</h2>
+      <h2>2. 言葉のキーワード</h2>
       <div class="checklist">
         <label class="item"><input type="checkbox" data-score="3"><span class="itemText">ATM・銀行へ</span></label>
         <label class="item"><input type="checkbox" data-score="3"><span class="itemText">コンビニ</span></label>
@@ -103,62 +71,94 @@
         <label class="item"><input type="checkbox" data-score="2"><span class="itemText">今日中・すぐ</span></label>
         <label class="item"><input type="checkbox" data-score="2"><span class="itemText">だれにも秘密</span></label>
         <label class="item"><input type="checkbox" data-score="2"><span class="itemText">LINEへ移動</span></label>
-        <label class="item"><input type="checkbox" data-score="3"><span class="itemText">二人の将来</span></label>
-        <label class="item"><input type="checkbox" data-score="3"><span class="itemText">絶対儲かる</span></label>
       </div>
-
-      <div class="audio-notice">
-        <span>📢</span>
-        <div>次の画面で音声が流れます。<br>犯人に聞こえないよう注意！</div>
-      </div>
-
+      <div class="audio-notice">📢 次の画面で音が出ます。注意！</div>
       <div class="actions">
-        <button onclick="check()" class="btn-main">診断する</button>
-        <button onclick="reset()" class="btn-sub">消去</button>
+        <button onclick="doCheck()" class="btn-main">診断する</button>
+        <button onclick="doReset()" class="btn-sub">消去</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen1" class="screen">
+    <div class="card">
+      <div id="resultBox" class="result-box">
+        <div id="resultIcon" style="font-size:50px">⚠️</div>
+        <h2 id="resultTitle" style="border:0">判定結果</h2>
+      </div>
+      <div id="resultText"></div>
+      <div class="actions" style="margin-top:20px;">
+        <button onclick="changeScreen(2)" class="btn-main">次へ</button>
+        <button onclick="changeScreen(0)" class="btn-sub">戻る</button>
       </div>
     </div>
   </section>
 
   <section id="screen2" class="screen">
     <div class="card">
-      <div id="resultBox" class="result-box">
-        <div id="resultIcon" class="result-icon">⚠️</div>
-        <h2 id="resultTitle" style="border:0; padding:0; margin:0;">判定結果</h2>
-      </div>
-      
-      <div id="resultText" style="font-size: 18px;"></div>
-      
-      <div class="actions" style="margin-top:20px;">
-        <button onclick="showScreen(2)" class="btn-main">次へ（対策を見る）</button>
-        <button onclick="showScreen(0)" class="btn-sub">戻る</button>
-      </div>
-    </div>
-  </section>
-
-  <section id="screen3" class="screen">
-    <div class="card">
-      <h2>まず、これをしてください！</h2>
-      <ul class="advice-list">
+      <h2>まず、これをしてください</h2>
+      <ul style="font-size:20px; font-weight:bold;">
         <li>電話をすぐに切る</li>
         <li>お金は払わない</li>
         <li>ひとりで悩まない</li>
       </ul>
-      
-      <p>相談はこちら（無料・秘密厳守）</p>
-      <a href="tel:9110" class="tel-btn">
-        📞 警察相談専用電話<br>
-        <span style="font-size: 28px;">＃９１１０</span>
-      </a>
-      
-      <button onclick="reset()" class="btn-sub" style="width:100%; margin-top:30px;">最初に戻る</button>
+      <a href="tel:9110" class="tel-btn">📞 警察相談 ＃９１１０</a>
+      <button onclick="doReset()" class="btn-sub" style="width:100%; margin-top:30px;">最初に戻る</button>
     </div>
   </section>
 </main>
 
 <script>
-  function showScreen(n) {
+  function changeScreen(n) {
     document.querySelectorAll('.screen').forEach((s, i) => s.classList.toggle('active', i === n));
     window.scrollTo(0, 0);
   }
 
-  function
+  function doCheck() {
+    let score = 0;
+    const checks = document.querySelectorAll('input:checked');
+    if (checks.length === 0) {
+      alert("あてはまるものを押してください。");
+      return;
+    }
+    checks.forEach(c => score += parseInt(c.dataset.score));
+
+    const box = document.getElementById('resultBox');
+    const title = document.getElementById('resultTitle');
+    const text = document.getElementById('resultText');
+    let voice = "";
+
+    if (score >= 3) {
+      box.className = "result-box danger";
+      document.getElementById('resultIcon').innerText = "🚨";
+      title.innerText = "詐欺の可能性が非常に高い！";
+      text.innerHTML = "今すぐ電話を切ってください！相手はウソをついています。";
+      voice = "これは詐欺の可能性が非常に高いです。すぐに電話を切ってください。";
+    } else {
+      box.className = "result-box caution";
+      document.getElementById('resultIcon').innerText = "💡";
+      title.innerText = "落ち着いて確認しましょう";
+      text.innerHTML = "一度電話を切り、公式の番号にかけ直してください。";
+      voice = "落ち着いてください。一度電話を切って確認しましょう。";
+    }
+    changeScreen(1);
+    doSpeak(voice);
+  }
+
+  function doReset() {
+    document.querySelectorAll('input').forEach(i => i.checked = false);
+    if(window.speechSynthesis) window.speechSynthesis.cancel();
+    changeScreen(0);
+  }
+
+  function doSpeak(t) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const ut = new SpeechSynthesisUtterance(t);
+    ut.lang = 'ja-JP';
+    ut.rate = 0.8;
+    window.speechSynthesis.speak(ut);
+  }
+</script>
+</body>
+</html>
