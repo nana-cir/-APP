@@ -4,10 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>詐欺かも？かんたんチェック（試作）</title>
- if (localStorage.getItem('nana_consent') !== 'true') {
-    window.location.href = 'annai.html';
-}
+
+  <script>
+    if (localStorage.getItem('nana_consent') !== 'true') {
+      window.location.href = 'annai.html';
+    }
+  </script>
   <style>
+    /* ここから下にスタイルが続く... */
     :root{
       --bg:#fbf7ef;           /* アイボリー */
       --card:#ffffff;
