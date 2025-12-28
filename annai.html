@@ -3,127 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ご利用案内 - NANA CIRCLE 営業サポート</title>
+    <title>ご利用案内 - 詐欺チェック</title>
     <style>
-        body {
-            font-family: sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            max-width: 500px;
-            width: 100%;
-        }
-        h2 {
-            color: #333;
-            font-size: 1.2rem;
-            text-align: center;
-            margin-top: 0;
-        }
-        .terms-box {
-            height: 300px;
-            overflow-y: scroll;
-            border: 1px solid #ddd;
-            padding: 15px;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: #555;
-            background: #fafafa;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .terms-box h3 {
-            font-size: 1rem;
-            color: #333;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-        .buttons {
-            display: flex;
-            gap: 10px;
-        }
-        button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .btn-agree {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-agree:hover {
-            background-color: #0056b3;
-        }
-        .btn-disagree {
-            background-color: #e0e0e0;
-            color: #666;
-        }
-        .btn-disagree:hover {
-            background-color: #d0d0d0;
-        }
+        body { font-family: sans-serif; background-color: #f4f7f6; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin:0; }
+        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; width: 100%; }
+        .terms-box { height: 250px; overflow-y: scroll; border: 1px solid #ddd; padding: 15px; font-size: 0.9rem; background: #fafafa; margin-bottom: 20px; }
+        .buttons { display: flex; gap: 10px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .btn-agree { background-color: #2f855a; color: white; }
+        .btn-disagree { background-color: #e0e0e0; color: #666; }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <h2>NANA CIRCLE 営業サポート<br>利用規約（ご案内）</h2>
-    
+    <h2>ご利用の前に</h2>
     <div class="terms-box">
-        <p>本システムをご利用いただく前に、以下の内容をご確認いただき、同意の上でご利用ください。</p>
-        
-        <h3>1. 利用条件</h3>
-        <p>○ 本システムは日本国内でのみ利用可能です。<br>
-        ○ 本システムは無料で利用できますが、利用時の通信料金は利用者の負担となります。</p>
-
-        <h3>2. サービスの停止・変更</h3>
-        <p>○ システム保守、アップデート、通信事業者の都合、または第三者による攻撃（DDoS等）への対応が必要な場合、予告なくサービスを停止することがあります。</p>
-
-        <h3>3. 免責事項（重要）</h3>
-        <p>○ <strong>情報の正確性:</strong> 本システムが提供する見積り結果や情報は概算であり、その正確性や完全性を保証するものではありません。<br>
-        ○ <strong>自己責任:</strong> 本システムの利用により生じた損害（営業損失、データの紛失、第三者とのトラブル等）について、運営者は一切の責任を負いません。最終的な判断は利用者の責任で行ってください。</p>
-
-        <h3>4. 禁止事項</h3>
-        <p>○ 本システムの解析（リバースエンジニアリング）、無断での複製、転載、または公序良俗に反する行為を禁止します。</p>
-
-        <h3>5. 規約の変更</h3>
-        <p>○ 運営者は、必要と判断した場合には、利用者に事前に通知することなく本規約を変更できるものとします。</p>
+        <p>本システムは詐欺被害防止のヒントを提供する試作ツールです。<br><br>
+        ○ 免責事項：本ツールの判定結果により生じた損害について、運営者は一切の責任を負いません。最終的な判断はご自身または警察・家族への相談の上で行ってください。<br><br>
+        ○ 通信料：利用に伴う通信料は利用者負担となります。</p>
     </div>
-
     <div class="buttons">
-        <button class="btn-disagree" onclick="handleDisagree()">同意しない</button>
-        <button class="btn-agree" onclick="handleAgree()">同意して利用を開始</button>
+        <button class="btn-disagree" onclick="location.href='https://www.google.com'">同意しない</button>
+        <button class="btn-agree" onclick="agree()">同意する</button>
     </div>
 </div>
-
 <script>
-    // 同意した場合
-    function handleAgree() {
-        // 同意したという情報をブラウザに保存（次回から出さないため）
+    function agree() {
         localStorage.setItem('nana_consent', 'true');
-        // メイン画面（index.htmlなど）へ移動
-        window.location.href = 'index.html'; 
-    }
-
-    // 同意しない場合
-    function handleDisagree() {
-        alert('規約に同意いただけない場合は、本サービスをご利用いただけません。');
-        // ブラウザのタブを閉じる、またはトップへ戻る
-        window.location.href = 'https://www.google.com'; 
+        location.href = 'index.html';
     }
 </script>
-
 </body>
 </html>
